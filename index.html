@@ -46,9 +46,13 @@
 </table>
 
 <script>
-    // Mengambil data dari API
-    fetch('https://api-laravel-deploy.vercel.app/users')
+    // URL API dengan proxy untuk mengatasi CORS, gunakan ini untuk testing CORS
+    const apiUrl = 'https://cors-anywhere.herokuapp.com/https://api-laravel-deploy.vercel.app/users';
+
+    // Fungsi fetch data dari API
+    fetch(apiUrl)
         .then(response => {
+            console.log('Response:', response); // Log respons untuk debugging
             if (!response.ok) {
                 throw new Error('Network response was not ok ' + response.statusText);
             }
