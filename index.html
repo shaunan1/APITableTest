@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Data Users</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+        th, td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: left;
+        }
+        th {
+            background-color: #f2f2f2;
+        }
+        tr:nth-child(even) {
+            background-color: #f9f9f9;
+        }
+    </style>
+</head>
+<body>
+
+<h1>Users Data</h1>
+<table id="usersTable">
+    <thead>
+        <tr>
+            <th>ID</th>
+            <th>Name</th>
+            <th>Email</th>
+            <th>Created At</th>
+            <th>Updated At</th>
+        </tr>
+    </thead>
+    <tbody>
+        <!-- Data akan dimasukkan di sini -->
+    </tbody>
+</table>
+
+<script>
+    // Mengambil data dari API
+    fetch('https://api-laravel-deploy.vercel.app/users')
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Network response was not ok ' + response.statusText);
+            }
+            return response.json();
+        })
+        .then(data => {
+            const tableBody = document.getElementById('usersTable').getElementsByTagName('tbody')[0];
+
+            // Menambahkan data ke dalam tabel
+            data.forEach(user => {
+                const row = tableBody.insertRow();
+                row.insertCell(0).textContent = user.id;
+                row.insertCell(1).textContent = user.name;
+                row.insertCell(2).textContent = user.email;
+                row.insertCell(3).textContent = new Date(user.created_at).toLocaleString();
+                row.insertCell(4).textContent = new Date(user.updated_at).toLocaleString();
+            });
+        })
+        .catch(error => {
+            console.error('Error fetching data:', error);
+            const tableBody = document.getElementById('usersTable').getElementsByTagName('tbody')[0];
+            const row = tableBody.insertRow();
+            const cell = row.insertCell(0);
+            cell.colSpan = 5;
+            cell.textContent = 'Error fetching data: ' + error.message;
+        });
+</script>
+
+</body>
+</html>
