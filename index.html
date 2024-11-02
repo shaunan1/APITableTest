@@ -3,83 +3,57 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Data Users</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            margin: 20px;
-        }
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-top: 20px;
-        }
-        th, td {
-            border: 1px solid #ddd;
-            padding: 8px;
-            text-align: left;
-        }
-        th {
-            background-color: #f2f2f2;
-        }
-        tr:nth-child(even) {
-            background-color: #f9f9f9;
-        }
-    </style>
+    <title>API Data in Table</title>
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
 </head>
 <body>
+    <div class="container">
+        <h1 class="text-center">API Data in Table</h1>
+        <table class="table table-bordered">
+            <thead class="table-dark">
+                <tr>
+                    <th>ID</th>
+                    <th>Name</th>
+                    <th>Description</th>
+                    <th>Created At</th>
+                    <th>Updated At</th>
+                </tr>
+            </thead>
+            <tbody id="tablebody">
+                <!-- Data will be inserted here -->
+            </tbody>
+        </table>
+    </div>
 
-<h1>Users Data</h1>
-<table id="usersTable">
-    <thead>
-        <tr>
-            <th>ID</th>
-            <th>Name</th>
-            <th>Email</th>
-            <th>Created At</th>
-            <th>Updated At</th>
-        </tr>
-    </thead>
-    <tbody>
-        <!-- Data akan dimasukkan di sini -->
-    </tbody>
-</table>
-
-<script>
-    // URL API dengan proxy untuk mengatasi CORS, gunakan ini untuk testing CORS
-    const apiUrl = 'https://cors-anywhere.herokuapp.com/https://api-laravel-deploy.vercel.app/users';
-
-    // Fungsi fetch data dari API
-    fetch(apiUrl)
-        .then(response => {
-            console.log('Response:', response); // Log respons untuk debugging
-            if (!response.ok) {
-                throw new Error('Network response was not ok ' + response.statusText);
-            }
-            return response.json();
-        })
-        .then(data => {
-            const tableBody = document.getElementById('usersTable').getElementsByTagName('tbody')[0];
-
-            // Menambahkan data ke dalam tabel
-            data.forEach(user => {
-                const row = tableBody.insertRow();
-                row.insertCell(0).textContent = user.id;
-                row.insertCell(1).textContent = user.name;
-                row.insertCell(2).textContent = user.email;
-                row.insertCell(3).textContent = new Date(user.created_at).toLocaleString();
-                row.insertCell(4).textContent = new Date(user.updated_at).toLocaleString();
+    <!-- JavaScript to fetch API data -->
+    <script>
+        // Fetch data from the API
+        fetch('https://api-laravel-deploy.vercel.app')
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Network response was not ok ' + response.statusText);
+                }
+                return response.json(); // Parse the JSON from the response
+            })
+            .then(data => {
+                const tableBody = document.getElementById('tablebody');
+                data.forEach(item => {
+                    const row = `
+                        <tr>
+                            <td>${item.id}</td>
+                            <td>${item.name}</td>
+                            <td>${item.description}</td>
+                            <td>${item.created_at}</td>
+                            <td>${item.updated_at}</td>
+                        </tr>
+                    `;
+                    tableBody.innerHTML += row; // Append the row to the table body
+                });
+            })
+            .catch(error => {
+                console.error('There was a problem with the fetch operation:', error);
             });
-        })
-        .catch(error => {
-            console.error('Error fetching data:', error);
-            const tableBody = document.getElementById('usersTable').getElementsByTagName('tbody')[0];
-            const row = tableBody.insertRow();
-            const cell = row.insertCell(0);
-            cell.colSpan = 5;
-            cell.textContent = 'Error fetching data: ' + error.message;
-        });
-</script>
-
+    </script>
 </body>
 </html>
