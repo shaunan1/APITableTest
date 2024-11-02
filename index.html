@@ -46,9 +46,21 @@
       const response = await fetch('https://api-laravel-deploy.vercel.app/users');
       const data = await response.json();
 
+      console.log(data); // Log data ke console untuk memastikan kita mendapatkannya
+
       const tableBody = document.getElementById('usersTable').getElementsByTagName('tbody')[0];
 
-      // Loop through data and add rows to the table
+      // Jika tidak ada data, tampilkan pesan "No data available"
+      if (!data.length) {
+        const row = tableBody.insertRow();
+        const cell = row.insertCell(0);
+        cell.colSpan = 6;
+        cell.textContent = 'No data available';
+        cell.style.textAlign = 'center';
+        return;
+      }
+
+      // Loop data dan masukkan ke dalam tabel
       data.forEach(user => {
         const row = tableBody.insertRow();
         row.insertCell(0).textContent = user.id;
@@ -60,10 +72,18 @@
       });
     } catch (error) {
       console.error('Error fetching users:', error);
+
+      // Tampilkan pesan kesalahan jika terjadi error
+      const tableBody = document.getElementById('usersTable').getElementsByTagName('tbody')[0];
+      const row = tableBody.insertRow();
+      const cell = row.insertCell(0);
+      cell.colSpan = 6;
+      cell.textContent = 'Error fetching data';
+      cell.style.textAlign = 'center';
     }
   }
 
-  // Call fetchUsers when the page loads
+  // Panggil fetchUsers ketika halaman dimuat
   fetchUsers();
 </script>
 
